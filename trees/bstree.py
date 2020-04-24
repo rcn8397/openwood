@@ -26,3 +26,6 @@ class BstTree( object ):
 
     def delete( self, key ):
         pass
+
+    def traverse( self, node, proc ):
+        pass
