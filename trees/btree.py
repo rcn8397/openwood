@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 '''
-Tree Primative
+BTree Primative
 '''
 class Visitor( object ):
     def __str__( self ):
@@ -10,12 +10,15 @@ class Node( object ):
     '''
     Generic Tree Node
     '''
-    def __init__( self, key = None, value = None ):
+    def __init__( self, key = None, value = None, left = None, right = None ):
         self.value  = value
-        self.key    = key       
-        self.left   = None
-        self.right  = None
-        self.parent = None
+        self.key    = key
+        self.left   = left
+        self.right  = right
+
+    def debug( self ):
+        for member in vars( self ):
+            print( '{0:10} = {1}'.format( member, vars( self )[ member ] ) )
 
     def accept( self, visitor ):
         '''
@@ -25,34 +28,37 @@ class Node( object ):
 
 class DebugVisitor( Visitor ):
     def visit( self, node ):
-        print( node )
-        
+        node.debug()
+
 class Btree( object ):
     '''
     Binary Search Tree Graph
     '''
     def __init__( self, root = None ):
-        super( Tree, self ).__init__()
+        super( Btree, self ).__init__()
         self.root = root
         self.nodes = list()
         self.graph = dict()
 
-    def insert( self, key, value, root = self.root, template = Node ):
-        # Create a new node with key, value parameters
-        node = template( key, value )
+    def insert( self, key, value ):
+        # If the trees root is None, set root to be tree root
+        self.root = self.binary_insert( key, value, self.root )
 
-        # If there is no root, set the node as the root
-        if root is None:
-            root = node            
-        # If the key matches the root's key, set the roots value 
-        elif key == root.key:
-            root.value = value
-        # If the key is less than this roots key insert it on the left
-        elif key < root.key:
-            self.insert_at( key, value, root.left, template )
-        # Finally, if the key is greater, insert it on the right
+    def binary_insert( self, key, value, node ):
+        if node is None:
+            return Node( key, value )
+        elif key == node.key:
+            return Node( key, value, node.left, node.right )
+        elif key < node.key:
+            return Node( node.key,
+                         node.value,
+                         self.binary_insert( key, value, node.left ),
+                         node.right )
         else:
-            self.insert_at( key, value, root.right, template )        
+            return Node( node.key,
+                         node.value,
+                         node.left,
+                         self.binary_insert( key, value, node.right ) )
 
     def bfs( self, node, visitor = DebugVisitor() ):
         '''
@@ -68,16 +74,18 @@ class Btree( object ):
 
             # Accept visitor
             v.accept( vistor )
-            
+
             if v.left is not None:
                 q.enqueu( v.left )
             if v.right is not None:
                 q.enqueu( v.right )
-        
-    def dfs( self, node, visitor = DebugVisitor(), order = self.in_order ):
+
+    def dfs( self, node, visitor = DebugVisitor(), order = None ):
         '''
         Depth first search
         '''
+        if order is None:
+            order = self.in_order
         order( node, visitor )
 
     def in_order( self, node, visitor ):
@@ -88,7 +96,7 @@ class Btree( object ):
 
         # Left node
         self.in_order( node.left, visitor )
-        
+
         # Accept visitors
         node.accept( visitor )
 
@@ -121,7 +129,7 @@ class Btree( object ):
         # Accept visitors
         node.accept( visitor )
 
-        
+
     def search( self, key ):
         pass
 
