@@ -30,6 +30,20 @@ class DebugVisitor( Visitor ):
     def visit( self, node ):
         node.debug()
 
+class DotVisitor( Visitor ):
+    def __init__( self ):
+        super( DotVisitor, self ).__init()
+        dot_header = 'digraph g {'
+        dot_nodes  = ''
+        dot_footer = '}'
+
+    def append_node( self, node ):
+        node_name = lambda node : 
+        self.dot_nodes += '{key}({value}) -'.format( node.left.
+        
+    def visit( self, node ):
+        print( node )
+
 class Btree( object ):
     '''
     Binary Search Tree Graph
