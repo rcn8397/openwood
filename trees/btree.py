@@ -11,8 +11,8 @@ class Node( object ):
     Generic Tree Node
     '''
     def __init__( self, key = None, value = None ):
-        self._value = value
-        self._key   = key       
+        self.value  = value
+        self.key    = key       
         self.left   = None
         self.right  = None
         self.parent = None
@@ -27,27 +27,32 @@ class DebugVisitor( Visitor ):
     def visit( self, node ):
         print( node )
         
-class Tree( object ):
+class Btree( object ):
     '''
-    Tree Graph
+    Binary Search Tree Graph
     '''
     def __init__( self, root = None ):
         super( Tree, self ).__init__()
         self.root = root
         self.nodes = list()
         self.graph = dict()
-        
-    def add_edge( self, u, v ):
-        '''
-        Add an edge to the tree
-        '''
-        self.graph[ u ].append( v )
-        
-    def insert( self, node, parent = None ):
-        self.nodes.append( node )
-        if parent is not None:
-            parent.append( node )
-            self.add_edge( parent, node )
+
+    def insert( self, key, value, root = self.root, template = Node ):
+        # Create a new node with key, value parameters
+        node = template( key, value )
+
+        # If there is no root, set the node as the root
+        if root is None:
+            root = node            
+        # If the key matches the root's key, set the roots value 
+        elif key == root.key:
+            root.value = value
+        # If the key is less than this roots key insert it on the left
+        elif key < root.key:
+            self.insert_at( key, value, root.left, template )
+        # Finally, if the key is greater, insert it on the right
+        else:
+            self.insert_at( key, value, root.right, template )        
 
     def bfs( self, node, visitor = DebugVisitor() ):
         '''
