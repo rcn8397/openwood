@@ -2,6 +2,7 @@
 '''
 BTree Primative
 '''
+
 class Visitor( object ):
     def __str__( self ):
         return self.__class__.__name__
@@ -15,6 +16,12 @@ class Node( object ):
         self.key    = key
         self.left   = left
         self.right  = right
+
+    def label( self ):
+        return '"{0}({1})"'.format( self.value, self.key )
+
+    def __str__( self ):
+        return str( self.value )
 
     def debug( self ):
         for member in vars( self ):
@@ -33,27 +40,42 @@ class DebugVisitor( Visitor ):
 class DotVisitor( Visitor ):
     def __init__( self ):
         super( DotVisitor, self ).__init__()
-        self.dot_header = 'digraph g {\n'
+        self.dot_header = 'graph G {\n'
+        self.dot_labels = ''
         self.dot_nodes  = ''
         self.dot_footer = '}\n'
 
     def write( self, fname ):
         with open( fname, 'w' ) as f:
             f.write( self.dot_header )
+            f.write( self.dot_labels )
             f.write( self.dot_nodes  )
             f.write( self.dot_footer )
 
+    def append_label( self, node ):
+        label = None
+        name  = None
+
+        if node is not None:
+            label = node.label()
+            name  = node.key
+
+        self.dot_labels += '{0} [label={1}];\n'.format( name, label )
+
     def append_node( self, node ):
-        def node_name( node ):
+        def node_key( node ):
             if node is not None:
-                return '\"{0}({1})\"'.format( node.key, node.value )
+                return node.key
             else:
                 return None
 
-        self.dot_nodes += '{0} -> {1}\n'.format( node_name( node ), node_name( node.left  ) )
-        self.dot_nodes += '{0} -> {1}\n'.format( node_name( node ), node_name( node.right ) )
+        self.dot_nodes += '{0} -- {1};\n'.format( node_key(node),
+                                                  node_key(node.left ) )
+        self.dot_nodes += '{0} -- {1};\n'.format( node_key(node),
+                                                  node_key(node.right) )
 
     def visit( self, node ):
+        self.append_label( node )
         self.append_node( node )
 
 class Btree( object ):
