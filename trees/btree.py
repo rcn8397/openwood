@@ -32,17 +32,29 @@ class DebugVisitor( Visitor ):
 
 class DotVisitor( Visitor ):
     def __init__( self ):
-        super( DotVisitor, self ).__init()
-        dot_header = 'digraph g {'
-        dot_nodes  = ''
-        dot_footer = '}'
+        super( DotVisitor, self ).__init__()
+        self.dot_header = 'digraph g {\n'
+        self.dot_nodes  = ''
+        self.dot_footer = '}\n'
+
+    def write( self, fname ):
+        with open( fname, 'w' ) as f:
+            f.write( self.dot_header )
+            f.write( self.dot_nodes  )
+            f.write( self.dot_footer )
 
     def append_node( self, node ):
-        node_name = lambda node : 
-        self.dot_nodes += '{key}({value}) -'.format( node.left.
-        
+        def node_name( node ):
+            if node is not None:
+                return '\"{0}({1})\"'.format( node.key, node.value )
+            else:
+                return None
+
+        self.dot_nodes += '{0} -> {1}\n'.format( node_name( node ), node_name( node.left  ) )
+        self.dot_nodes += '{0} -> {1}\n'.format( node_name( node ), node_name( node.right ) )
+
     def visit( self, node ):
-        print( node )
+        self.append_node( node )
 
 class Btree( object ):
     '''
@@ -143,6 +155,10 @@ class Btree( object ):
         # Accept visitors
         node.accept( visitor )
 
+    def as_dot( self, fname ):
+        visitor = DotVisitor()
+        self.dfs( self.root, visitor = visitor )
+        visitor.write( fname )
 
     def search( self, key ):
         pass

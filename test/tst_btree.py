@@ -16,7 +16,7 @@ def main():
         tree.insert( ord(char), char )
 
     tree.dfs( tree.root )
-    
+    tree.as_dot( 'test.dot' )
     
 # Standard biolerplate to call the main() function to begin the program
 if __name__ == '__main__':
