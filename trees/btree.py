@@ -42,6 +42,7 @@ class DotVisitor( Visitor ):
         super( DotVisitor, self ).__init__()
         self.dot_header = 'graph G {\n'
         self.dot_labels = ''
+        self.dot_ranks  = ''
         self.dot_nodes  = ''
         self.dot_footer = '}\n'
 
@@ -49,6 +50,7 @@ class DotVisitor( Visitor ):
         with open( fname, 'w' ) as f:
             f.write( self.dot_header )
             f.write( self.dot_labels )
+            f.write( self.dot_ranks  )
             f.write( self.dot_nodes  )
             f.write( self.dot_footer )
 
@@ -116,17 +118,17 @@ class Btree( object ):
         '''
         from queue import Queue
         q = Queue()
-        q.enque( node )
+        q.put( node )
         while not q.empty():
             v = q.get()
 
             # Accept visitor
-            v.accept( vistor )
+            v.accept( visitor )
 
             if v.left is not None:
-                q.enqueu( v.left )
+                q.put( v.left )
             if v.right is not None:
-                q.enqueu( v.right )
+                q.put( v.right )
 
     def dfs( self, node, visitor = DebugVisitor(), order = None ):
         '''
@@ -179,7 +181,7 @@ class Btree( object ):
 
     def as_dot( self, fname ):
         visitor = DotVisitor()
-        self.dfs( self.root, visitor = visitor )
+        self.bfs( self.root, visitor = visitor )
         visitor.write( fname )
 
     def search( self, key ):
