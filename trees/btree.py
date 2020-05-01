@@ -2,6 +2,7 @@
 '''
 BTree Primative
 '''
+address_of = lambda x : hex( id( x ) )
 
 class Visitor( object ):
     def __str__( self ):
@@ -18,8 +19,10 @@ class Node( object ):
         self.right  = right
 
     def label( self ):
-        return '"{0}({1})"'.format( self.value, self.key )
+        return '{0}({1})'.format( self.value, self.key )
 
+    def address( self ):
+        return hex( id( self ) )
     def __str__( self ):
         return str( self.value )
 
@@ -46,6 +49,9 @@ class DotVisitor( Visitor ):
         self.dot_nodes  = ''
         self.dot_footer = '}\n'
 
+        # Create a Null (None) node label
+        self.dot_labels += self.add_label( address_of(None), 'None')
+
     def write( self, fname ):
         with open( fname, 'w' ) as f:
             f.write( self.dot_header )
@@ -54,27 +60,19 @@ class DotVisitor( Visitor ):
             f.write( self.dot_nodes  )
             f.write( self.dot_footer )
 
+    def add_label( self, node, label ):
+        return '"{0}" [label="{1}"];\n'.format(node,label)
+
     def append_label( self, node ):
-        label = None
-        name  = None
-
-        if node is not None:
-            label = node.label()
-            name  = node.key
-
-        self.dot_labels += '{0} [label={1}];\n'.format( name, label )
+        self.dot_labels += self.add_label( address_of(node),
+                                           node.label() )
 
     def append_node( self, node ):
-        def node_key( node ):
-            if node is not None:
-                return node.key
-            else:
-                return None
-
-        self.dot_nodes += '{0} -- {1};\n'.format( node_key(node),
-                                                  node_key(node.left ) )
-        self.dot_nodes += '{0} -- {1};\n'.format( node_key(node),
-                                                  node_key(node.right) )
+        add_edge = lambda u, v : '"{0}" -- "{1}"\n'.format( u, v )
+        self.dot_nodes += add_edge( address_of(node),
+                                    address_of(node.left ) )
+        self.dot_nodes += add_edge( address_of(node),
+                                    address_of(node.right) )
 
     def visit( self, node ):
         self.append_label( node )
