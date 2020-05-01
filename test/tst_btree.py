@@ -13,7 +13,7 @@ def main():
     tree = Btree()
     
     for i, char in enumerate( 'hello_world' ):
-        tree.insert( ord(char), char )
+        tree.insert( i, char )
 
     tree.dfs( tree.root )
     tree.as_dot( 'test.dot' )
