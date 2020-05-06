@@ -18,6 +18,7 @@ def main():
     tree.dfs( tree.root )
 
     # Output draft as dot
+    print( 'Writing tree to dot format' )
     tree.as_dot( 'test.dot' )
 
     # Search for the 4th
@@ -29,8 +30,12 @@ def main():
 
     print( 'Searched Node\'s min: {0}, max: {1}'.format( fourth.minimum(),
                                                          fourth.maximum() ) )
+
+    print( 'Attempting to delete the searched node' )
     tree.delete( fourth.key )
+
     # Output modified tree as dot
+    print( 'Writing modified tree to dot format' )
     tree.as_dot( 'deleted.dot' )
 
 
