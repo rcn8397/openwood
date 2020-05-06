@@ -12,6 +12,7 @@ Wikipedia:
 https://en.wikipedia.org/wiki/Binary_search_tree#Operations
 
 '''
+
 address_of = lambda x : hex( id( x ) )
 
 class Visitor( object ):
@@ -38,6 +39,7 @@ class Node( object ):
         return str( self.value )
 
     def debug( self ):
+        print( '\n/// {0} ///'.format( str( self ) ) )
         for member in vars( self ):
             print( '{0:10} = {1}'.format( member, vars( self )[ member ] ) )
 
@@ -126,21 +128,23 @@ class Btree( object ):
         # If the trees root is None, set root to be tree root
         self.root = self.binary_insert( key, value, self.root )
 
-    def binary_insert( self, key, value, node ):
+    def binary_insert( self, key, value, node, parent = None ):
         if node is None:
-            return Node( key, value )
+            return Node( key, value, None, None, parent )
         elif key == node.key:
-            return Node( key, value, node.left, node.right )
+            return Node( key, value, node.left, node.right, node.parent )
         elif key < node.key:
             return Node( node.key,
                          node.value,
-                         self.binary_insert( key, value, node.left ),
-                         node.right )
+                         self.binary_insert( key, value, node.left, node ),
+                         node.right,
+                         node.parent )
         else:
             return Node( node.key,
                          node.value,
                          node.left,
-                         self.binary_insert( key, value, node.right ) )
+                         self.binary_insert( key, value, node.right, node ),
+                         node.parent )
 
     def bfs( self, node, visitor = DebugVisitor() ):
         '''
