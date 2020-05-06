@@ -17,6 +17,7 @@ class Node( object ):
         self.key    = key
         self.left   = left
         self.right  = right
+        self.parent = None
 
     def label( self ):
         return '{0}({1})'.format( self.value, self.key )
@@ -29,6 +30,22 @@ class Node( object ):
     def debug( self ):
         for member in vars( self ):
             print( '{0:10} = {1}'.format( member, vars( self )[ member ] ) )
+
+    def minimum( self ):
+        '''Find minimum node in this nodes subtree'''
+        current = self
+        while current.left:
+            current = current.left
+        return current
+
+    def replace_parent( self, node = None ):
+        if self.parent:
+            if self == self.parent.left:
+                self.parent.left = node
+            else:
+                self.parent.right = node
+        if node:
+            node.parent = self.parent
 
     def accept( self, visitor ):
         '''
@@ -182,11 +199,39 @@ class Btree( object ):
         self.bfs( self.root, visitor = visitor )
         visitor.write( fname )
 
-    def search( self, key ):
-        pass
+    def search( self, key, node ):
+        '''
+        Recursively search for key from node
+        '''
+        if node is None or node.key == key:
+            return node
+        if key < node.key:
+            return self.search( key, node.left )
+        if key > node.key:
+            return self.search( key, node.right )
+
 
     def delete( self, key ):
-        pass
+        node = self.search( key, self.root )
+        self.binary_tree_delete( key, node )
 
-    def traverse( self, node, proc ):
-        pass
+    def binary_tree_delete( self, key, node ):
+        if node is None: return
+        if key < node.key:
+            self.binary_tree_delete( key, node.left )
+            return
+        if key > node.key:
+            self.binary_tree_delete( key, node.right )
+            return
+        # Delete key
+        if node.left and node.right:
+            # If both children are present
+            successor = node.right.minimum()
+            node.key = successor.key
+            self.binary_tree_delete( successor.key, successor )
+        elif node.left:
+            node.replace_parent( node.left )
+        elif node.right:
+            node.replace_parent( node.right )
+        else:
+            node.replace_parent( None )

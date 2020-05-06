@@ -11,13 +11,24 @@ from trees.btree import Btree
 # Main
 def main():
     tree = Btree()
-    
+
     for i, char in enumerate( 'hello_world' ):
         tree.insert( i, char )
 
     tree.dfs( tree.root )
+
+    # Output draft as dot
     tree.as_dot( 'test.dot' )
-    
+
+    # Search for the 4th
+    fourth = tree.search( 4, tree.root )
+    print( 'Searching for the node with the fourth key, found: [{0}]'.format( fourth.value ) )
+
+    tree.delete( fourth.key )
+    # Output modified tree as dot
+    tree.as_dot( 'deleted.dot' )
+
+
 # Standard biolerplate to call the main() function to begin the program
 if __name__ == '__main__':
     main()
