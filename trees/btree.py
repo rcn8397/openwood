@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 '''
 BTree Primative
+
+This work is based heavily on Introduction to Algorithms (third edition) and Wikipedia
+
+Introduction to Algorithms
+https://www.amazon.com/Introduction-Algorithms-3rd-MIT-Press/dp/0262033844
+https://mitpress.mit.edu/books/introduction-algorithms-third-edition
+
+Wikipedia:
+https://en.wikipedia.org/wiki/Binary_search_tree#Operations
+
 '''
 address_of = lambda x : hex( id( x ) )
 
@@ -31,6 +41,13 @@ class Node( object ):
         for member in vars( self ):
             print( '{0:10} = {1}'.format( member, vars( self )[ member ] ) )
 
+    def maximum( self ):
+        '''Find maximum node in this nodes subtree'''
+        current = self
+        while current.right:
+            current = current.right
+        return current
+
     def minimum( self ):
         '''Find minimum node in this nodes subtree'''
         current = self
@@ -38,7 +55,7 @@ class Node( object ):
             current = current.left
         return current
 
-    def replace_parent( self, node = None ):
+    def replace_in_parent( self, node = None ):
         if self.parent:
             if self == self.parent.left:
                 self.parent.left = node
@@ -199,20 +216,36 @@ class Btree( object ):
         self.bfs( self.root, visitor = visitor )
         visitor.write( fname )
 
-    def search( self, key, node ):
+    def search( self, key ):
+        return self.binary_search( key, self.root )
+
+    def binary_search( self, key, node ):
         '''
         Recursively search for key from node
         '''
         if node is None or node.key == key:
             return node
         if key < node.key:
-            return self.search( key, node.left )
+            return self.binary_search( key, node.left )
         if key > node.key:
-            return self.search( key, node.right )
+            return self.binary_search( key, node.right )
 
+    @property
+    def min( self ):
+        return self.root.minimum()
+
+    @property
+    def max( self ):
+        return self.root.maximum()
+
+    def minimum( self, node ):
+        return node.minimum()
+
+    def maximum( self, node ):
+        return node.maximum()
 
     def delete( self, key ):
-        node = self.search( key, self.root )
+        node = self.search( key )
         self.binary_tree_delete( key, node )
 
     def binary_tree_delete( self, key, node ):
@@ -230,8 +263,8 @@ class Btree( object ):
             node.key = successor.key
             self.binary_tree_delete( successor.key, successor )
         elif node.left:
-            node.replace_parent( node.left )
+            node.replace_in_parent( node.left )
         elif node.right:
-            node.replace_parent( node.right )
+            node.replace_in_parent( node.right )
         else:
-            node.replace_parent( None )
+            node.replace_in_parent( None )

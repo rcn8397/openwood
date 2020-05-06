@@ -21,9 +21,14 @@ def main():
     tree.as_dot( 'test.dot' )
 
     # Search for the 4th
-    fourth = tree.search( 4, tree.root )
+    fourth = tree.search( 4 )
     print( 'Searching for the node with the fourth key, found: [{0}]'.format( fourth.value ) )
 
+    print( 'Tree minimum: {0}'.format( tree.min ) )
+    print( 'Tree maximum: {0}'.format( tree.max ) )
+
+    print( 'Searched Node\'s min: {0}, max: {1}'.format( fourth.minimum(),
+                                                         fourth.maximum() ) )
     tree.delete( fourth.key )
     # Output modified tree as dot
     tree.as_dot( 'deleted.dot' )
