@@ -2,11 +2,9 @@
 al·go·rithm (s)
 
 # Forest
-## BS Tree (Trunk)
-Based off public discourse at Wikipedia and Introduction to Algorithms (Third Edition)
-https://en.wikipedia.org/wiki/Binary_search_tree#Operations
-## RB Tree
-## Treap
+## BS Tree (Development)
+## RB Tree (Place holder)
+## Treap   (Place holder)
 
 # Attribution
 Based off public/published discourse on algothrims.
