@@ -22,12 +22,12 @@ class Node( object ):
     '''
     Generic Tree Node
     '''
-    def __init__( self, key = None, value = None, left = None, right = None ):
+    def __init__( self, key = None, value = None, left = None, right = None, parent = None ):
         self.value  = value
         self.key    = key
         self.left   = left
         self.right  = right
-        self.parent = None
+        self.parent = parent
 
     def label( self ):
         return '{0}({1})'.format( self.value, self.key )
@@ -243,6 +243,16 @@ class Btree( object ):
 
     def maximum( self, node ):
         return node.maximum()
+
+    def successor( self, node ):
+        x = node
+        if x.right is not None:
+            return self.minimum( x.right )
+        y = node.parent
+        while y is not None and x == y.right:
+            x = y
+            y = y.parent
+        return y 
 
     def delete( self, key ):
         node = self.search( key )
