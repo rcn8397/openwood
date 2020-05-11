@@ -30,6 +30,13 @@ class Node( object ):
         self.right  = right
         self.parent = parent
 
+    def replace_with( self, node ):
+        self.value  = node.value
+        self.key    = node.key
+        self.left   = node.left
+        self.right  = node.right
+        self.parent = node.parent
+
     def label( self ):
         return '{0}({1})'.format( self.value, self.key )
 
@@ -56,15 +63,6 @@ class Node( object ):
         while current.left:
             current = current.left
         return current
-
-    def replace_in_parent( self, node = None ):
-        if self.parent:
-            if self == self.parent.left:
-                self.parent.left = node
-            else:
-                self.parent.right = node
-        if node:
-            node.parent = self.parent
 
     def accept( self, visitor ):
         '''
@@ -256,29 +254,60 @@ class Btree( object ):
         while y is not None and x == y.right:
             x = y
             y = y.parent
-        return y 
+        return y
 
-    def delete( self, key ):
-        node = self.search( key )
-        self.binary_tree_delete( key, node )
-
-    def binary_tree_delete( self, key, node ):
-        if node is None: return
-        if key < node.key:
-            self.binary_tree_delete( key, node.left )
-            return
-        if key > node.key:
-            self.binary_tree_delete( key, node.right )
-            return
-        # Delete key
-        if node.left and node.right:
-            # If both children are present
-            successor = node.right.minimum()
-            node.key = successor.key
-            self.binary_tree_delete( successor.key, successor )
-        elif node.left:
-            node.replace_in_parent( node.left )
-        elif node.right:
-            node.replace_in_parent( node.right )
+    def transplant( self, u, v ):
+        '''
+        Transplant subtree u, with subtree v
+        '''
+        if u.parent is None:
+            # Handle case in which u is the root of the Tree
+            self.root.replace_with( v )
+        elif u == u.parent.left:
+            # Update u's parent's left child
+            u.parent.left.replace_with( v )
         else:
-            node.replace_in_parent( None )
+            # Update u's parent's left child
+            u.parent.right.replace_with( v )
+        if v is not None:
+            # Update v's parent with u's parent
+            v.parent.replace_with( u.parent )
+
+    def delete_key( self, key ):
+        node = self.search( key )
+        self.delete( node )
+
+    def delete( self, node ):
+        if node.left is None:
+            # If node has no left child, then replace this
+            # node by its right child (which may be None)
+            node.replace_with( node.right )
+        elif node.left is not None and node.right is None:
+            # If this node has just a left child, then
+            # replace this node by its left child
+            node.replace_with( node.left )
+        else:
+            # Else node has both left and right child nodes.
+
+            # Find this nodes successor Y
+            y = self.successor( node )
+
+            if node.right == y:
+                # If Y is this nodes right child, then replace it with Y
+                node.replace_with( y )
+            else:
+                # Otherwise Y lies in this nodes right subtree but is
+                # not this nodes right child
+
+                # Replace Y by it's own right child
+                y.replace_with( y.right )
+
+
+                # Set Y to be the nodes right child parent.
+                node.right.parent = y
+
+                # Set Y's left child to be nodes left subtree
+                y.left = node.left
+
+                # Finally replace Y as node
+                node.replace_with( y )

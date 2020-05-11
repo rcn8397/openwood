@@ -32,7 +32,7 @@ def main():
                                                          fourth.maximum() ) )
 
     print( 'Attempting to delete the searched node' )
-    tree.delete( fourth.key )
+    tree.delete_key( fourth.key )
 
     # Output modified tree as dot
     print( 'Writing modified tree to dot format' )
