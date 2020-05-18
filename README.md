@@ -6,6 +6,18 @@ al·go·rithm (s)
 ## RB Tree (Place holder)
 ## Treap   (Place holder)
 
+# Testing
+Tests the algorithm implementation
+## Tests
+### tst_btree.py
+
+## Diffing dot file output
+Use your favorit diff program or imagemagick's compare
+
+[Example:](https://imagemagick.org/discourse-server/viewtopic.php?t=26941)
+
+    compare -metric rmse -subimage-search image2.png image1.png cmp.png
+
 # Attribution
 Based off public/published discourse on algothrims.
 * [Introduction to Algorithms (Third Edition)](https://mitpress.mit.edu/books/introduction-algorithms-third-edition)
