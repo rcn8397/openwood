@@ -12,105 +12,15 @@ Wikipedia:
 https://en.wikipedia.org/wiki/Binary_search_tree#Operations
 
 '''
+from .visitor import *
+from .bnode   import BNode
 
-address_of = lambda x : hex( id( x ) )
-
-class Visitor( object ):
-    def __str__( self ):
-        return self.__class__.__name__
-
-class Node( object ):
+class Node( BNode ):
     '''
     Generic Tree Node
     '''
-    def __init__( self, key = None, value = None, left = None, right = None, parent = None ):
-        self.value  = value
-        self.key    = key
-        self.left   = left
-        self.right  = right
-        self.parent = parent
-
-    def replace_with( self, node ):
-        self.value  = node.value
-        self.key    = node.key
-        self.left   = node.left
-        self.right  = node.right
-        self.parent = node.parent
-
-    def label( self ):
-        return '{0}({1})'.format( self.value, self.key )
-
-    def address( self ):
-        return hex( id( self ) )
-    def __str__( self ):
-        return str( self.value )
-
-    def debug( self ):
-        print( '\n/// {0} ///'.format( str( self ) ) )
-        for member in vars( self ):
-            print( '{0:10} = {1}'.format( member, vars( self )[ member ] ) )
-
-    def maximum( self ):
-        '''Find maximum node in this nodes subtree'''
-        current = self
-        while current.right:
-            current = current.right
-        return current
-
-    def minimum( self ):
-        '''Find minimum node in this nodes subtree'''
-        current = self
-        while current.left:
-            current = current.left
-        return current
-
-    def accept( self, visitor ):
-        '''
-        Accept a visitor
-        '''
-        visitor.visit( self )
-
-class DebugVisitor( Visitor ):
-    def visit( self, node ):
-        node.debug()
-
-class DotVisitor( Visitor ):
-    def __init__( self ):
-        super( DotVisitor, self ).__init__()
-        self.dot_header = 'graph G {\n'
-        self.dot_labels = ''
-        self.dot_ranks  = ''
-        self.dot_nodes  = ''
-        self.dot_footer = '}\n'
-
-        # Create a Null (None) node label
-        self.dot_labels += self.add_label( address_of(None), 'None')
-
-    def write( self, fname ):
-        with open( fname, 'w' ) as f:
-            f.write( self.dot_header )
-            f.write( self.dot_labels )
-            f.write( self.dot_ranks  )
-            f.write( self.dot_nodes  )
-            f.write( self.dot_footer )
-
-    def add_label( self, node, label ):
-        return '"{0}" [label="{1}"];\n'.format(node,label)
-
-    def append_label( self, node ):
-        self.dot_labels += self.add_label( address_of(node),
-                                           node.label() )
-
-    def append_node( self, node ):
-        add_edge = lambda u, v : '"{0}" -- "{1}"\n'.format( u, v )
-        self.dot_nodes += add_edge( address_of(node),
-                                    address_of(node.left ) )
-        self.dot_nodes += add_edge( address_of(node),
-                                    address_of(node.right) )
-
-    def visit( self, node ):
-        self.append_label( node )
-        self.append_node( node )
+    def __init__( self, *args, **kwargs ):
+        super( Node, self ).__init__( *args, **kwargs )
 
 class Btree( object ):
     '''
