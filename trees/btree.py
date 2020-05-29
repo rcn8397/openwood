@@ -15,6 +15,11 @@ https://en.wikipedia.org/wiki/Binary_search_tree#Operations
 from .visitor import *
 from .bnode   import BNode
 
+try: 
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
+
 class Node( BNode ):
     '''
     Generic Tree Node
@@ -59,8 +64,7 @@ class Btree( object ):
         Breadth-first search (connected components)
 
         node (Node) starting node
-        '''
-        from queue import Queue
+        '''            
         q = Queue()
         q.put( node )
         while not q.empty():
