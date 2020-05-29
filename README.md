@@ -7,9 +7,9 @@ al·go·rithm (s)
 ## Treap   (Place holder)
 
 # Testing
-Tests the algorithm implementation
-## Tests
-### tst_btree.py
+Testint the algorithm implementation(s).
+## Travis CI
+[Dashboard](https://travis-ci.com/github/rcn8397/openwood)
 
 ## Diffing dot file output
 Use your favorit diff program or imagemagick's compare
