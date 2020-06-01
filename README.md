@@ -1,4 +1,4 @@
-# openwood
+# openwood [![Build Status](https://travis-ci.com/rcn8397/openwood.svg?branch=master)](https://travis-ci.com/rcn8397/openwood)
 al·go·rithm (s)
 
 # Forest
